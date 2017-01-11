@@ -5,7 +5,7 @@
  * executeonnewstack(void *tos, void (*tramp)(void *arg), void *arg)
  */
 
-	.type	 ournewstack,@function
+	.type	executeonnewstack,@function
 	.global	executeonnewstack
 executeonnewstack:
 	pushl	%ebp
@@ -23,7 +23,7 @@ executeonnewstack:
 	popl	%eax		/* recover the tramp address */
 	call	*%eax		/* and jump to it (ho ho) */
 
-	/* if we return here, tramp didn't do it's job */
+	/* if we return here, tramp didn't do its job */
 
 	addl	$8, %esp	/* clean up for pose value */
 
@@ -90,12 +90,6 @@ FPrestore:
 	movl	8(%ebp), %eax
 	fldenv	(%eax)
 	popl	%ebp
-	ret
-
-	.type	getcallerpc,@function
-	.global	getcallerpc
-getcallerpc:
-	movl	4(%ebp), %eax
 	ret
 
 	.type	_tas,@function
