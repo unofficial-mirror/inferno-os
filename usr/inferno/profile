@@ -1,0 +1,18 @@
+# Set up expected directories and files
+mkdir -p /keydb
+mkdir -p /mnt
+mkdir -p /n
+mkdir -p $home/keyring
+
+touch /keydb/keys
+
+# Create common mount points
+mkdir -p /mnt
+mkdir -p /n
+
+mount -a {mntgen} /mnt
+mount -a {mntgen} /n
+
+# Set up network stack
+ndb/cs
+ndb/dns
