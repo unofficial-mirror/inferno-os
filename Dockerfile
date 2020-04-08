@@ -1,10 +1,11 @@
-FROM i386/ubuntu:devel
+FROM i386/ubuntu:18.04
 
-RUN apt-get -y update
-RUN apt-get install -y libx11-dev \
-	libxext-dev \
-	libc6-dev \
-	gcc
+# The following fails with ubuntu:devel, and adding ARG DEBIAN_FRONTEND=noninteractive didn't work
+RUN apt-get -y update && apt-get install -y \
+    libx11-dev \
+    libxext-dev \
+    libc6-dev \
+    gcc
 
 # if on i386 there's no need for multilib
 #RUN apt-get install -y libc6-dev-i386
@@ -33,4 +34,3 @@ RUN mk nuke
 RUN mk install
 
 CMD ["emu", "-c1",  "wm/wm"]
-
