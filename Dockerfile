@@ -15,17 +15,18 @@ RUN apt-get -y update && apt-get install -y \
 ENV INFERNO=/usr/inferno
 COPY . $INFERNO
 WORKDIR $INFERNO
+# Required for the multiline echo format below
+SHELL [ "/bin/bash", "-c"]
 
 # setup a custom mkconfig
-RUN echo > mkconfig ROOT=$INFERNO
-RUN echo >>mkconfig TKSTYLE=std
-RUN echo >>mkconfig SYSHOST=Linux
-RUN echo >>mkconfig SYSTARG=Linux
-RUN echo >>mkconfig OBJTYPE=386
-
-RUN echo >>mkconfig 'OBJDIR=$SYSTARG/$OBJTYPE'
-RUN echo >>mkconfig '<$ROOT/mkfiles/mkhost-$SYSHOST'
-RUN echo >>mkconfig '<$ROOT/mkfiles/mkfile-$SYSTARG-$OBJTYPE'
+RUN echo $'ROOT=/usr/inferno \n\
+    TKSTYLE=std \n\
+    SYSHOST=Linux \n\
+    SYSTARG=Linux \n\
+    OBJTYPE=386 \n\
+    OBJDIR=$SYSTARG/$OBJTYPE \n\
+    <$ROOT/mkfiles/mkhost-$SYSHOST \n\
+    <$ROOT/mkfiles/mkfile-$SYSTARG-$OBJTYPE' > mkconfig
 
 # build code
 RUN ./makemk.sh
