@@ -1,5 +1,7 @@
 # emu sh initialisation here
 
 # Check for user profile, run if found
-home=/usr/^"{cat /dev/user}
+load std
+user="{cat /dev/user}
+home=/usr/$user
 if {ftest -f $home/profile} {run $home/profile} {}
