@@ -2,10 +2,20 @@ FROM i386/ubuntu:18.04
 
 # The following fails with ubuntu:devel, and adding ARG DEBIAN_FRONTEND=noninteractive didn't work
 RUN apt-get -y update && apt-get install -y \
+    curl \
     libx11-dev \
     libxext-dev \
     libc6-dev \
-    gcc
+    locales \
+    gcc \
+    gdb \
+    wget
+
+# Set up UTF8 locale
+RUN locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
+ENV LC_ALL=C.UTF-8
+# Set up a nice gdbinit
+RUN curl -s -L https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
 
 # if on i386 there's no need for multilib
 #RUN apt-get install -y libc6-dev-i386
@@ -34,4 +44,9 @@ ENV PATH="$INFERNO/Linux/386/bin:${PATH}"
 RUN mk nuke
 RUN mk install
 
-CMD ["emu", "-c1",  "wm/wm"]
+# Create an inferno user.
+RUN useradd -mrs /bin/bash inferno
+RUN chown -R inferno:inferno $INFERNO
+USER inferno
+
+CMD ["emu", "-c1"]
