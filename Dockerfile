@@ -22,8 +22,17 @@ RUN curl -s -L https://github.com/hugsy/gef/raw/master/scripts/gef.sh | sh
 #RUN apt-get install -y libx11-6:i386, libxext-dev:i386
 #RUN apt-get install -y gcc-multilib
 
+# Create an inferno user.
+ARG USER=inferno
+ARG UID=1000
+ARG GID=1000
+RUN groupadd -g $GID -o $USER
+RUN useradd -m -u $UID -g $GID -s /bin/bash $USER
+USER $USER
+
+# If you change the container workspace, you must also change the mkconfig file below and the $WORKSPACE variable in docker-run.sh
 ENV INFERNO=/usr/inferno
-COPY . $INFERNO
+COPY --chown=$USER:$USER . $INFERNO
 WORKDIR $INFERNO
 # Required for the multiline echo format below
 SHELL [ "/bin/bash", "-c"]
@@ -43,10 +52,5 @@ RUN ./makemk.sh
 ENV PATH="$INFERNO/Linux/386/bin:${PATH}"
 RUN mk nuke
 RUN mk install
-
-# Create an inferno user.
-RUN useradd -mrs /bin/bash inferno
-RUN chown -R inferno:inferno $INFERNO
-USER inferno
 
 CMD ["emu", "-c1"]
